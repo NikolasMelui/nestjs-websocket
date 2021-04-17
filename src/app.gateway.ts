@@ -6,7 +6,6 @@ import {
   SubscribeMessage,
   WebSocketGateway,
   WebSocketServer,
-  WsResponse,
 } from '@nestjs/websockets';
 import { Server, Socket } from 'socket.io';
 
@@ -31,6 +30,9 @@ export class AppGateway
 
   @SubscribeMessage('msgToServer')
   handleMessage(client: Socket, msg: string): void {
+    this.logger.log(
+      `The message from client ${client.id} has been received: ${msg}`,
+    );
     this.wss.emit('msgToClient', msg);
   }
 }
