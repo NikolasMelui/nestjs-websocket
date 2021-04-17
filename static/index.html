@@ -1,12 +1,39 @@
 <!DOCTYPE html>
 <html lang="en">
-<head>
-    <meta charset="UTF-8">
-    <meta http-equiv="X-UA-Compatible" content="IE=edge">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <head>
+    <meta charset="UTF-8" />
+    <meta http-equiv="X-UA-Compatible" content="IE=edge" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <title>Document</title>
-</head>
-<body>
- <h1>Hello there!</h1>   
-</body>
+    <script src="https://cdn.jsdelivr.net/npm/vue@2.6.12/dist/vue.js"></script>
+  </head>
+  <body>
+    <div id="v-app">
+      <h1>{{ title }}</h1>
+      <form>
+        <input v-model="text" type="text" />
+        <button type="submit" @click.prevent="sendMessage()">Send</button>
+      </form>
+      <p></p>
+      <ul>
+        <li v-for="msg of messages">{{ msg }}</li>
+      </ul>
+    </div>
+    <script>
+      const app = new Vue({
+        el: '#v-app',
+        data: {
+          title: 'WebSocket tester',
+          text: '',
+          messages: ['Message one', 'Message two'],
+        },
+        methods: {
+          sendMessage() {
+            this.messages.push(this.text);
+            this.text = '';
+          },
+        },
+      });
+    </script>
+  </body>
 </html>
