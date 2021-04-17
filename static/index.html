@@ -6,6 +6,7 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <title>Document</title>
     <script src="https://cdn.jsdelivr.net/npm/vue@2.6.12/dist/vue.js"></script>
+    <script src="/socket.io/socket.io.js"></script>
   </head>
   <body>
     <div id="v-app">
@@ -26,12 +27,24 @@
           title: 'WebSocket tester',
           text: '',
           messages: ['Message one', 'Message two'],
+          socket: null,
         },
         methods: {
           sendMessage() {
-            this.messages.push(this.text);
+            console.log(`snd: ${this.text}`);
+            this.socket.emit('msgToServer', this.text);
             this.text = '';
           },
+          receiveMessage(msg) {
+            console.log(`rcv: ${msg}`);
+            this.messages.push(msg);
+          },
+        },
+        created() {
+          this.socket = io('http://localhost:3000');
+          this.socket.on('msgToClient', (msg) => {
+            this.receiveMessage(msg);
+          });
         },
       });
     </script>
