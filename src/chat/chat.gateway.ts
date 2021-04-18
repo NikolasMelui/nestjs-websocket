@@ -8,6 +8,8 @@ import {
   WebSocketServer,
 } from '@nestjs/websockets';
 import { Server, Socket } from 'socket.io';
+import { ChatToClientMessageDto } from './chat-to-client-message.dto';
+import { ChatToServerMessageDto } from './chat-to-server-message.dto';
 
 @WebSocketGateway({ namespace: '/chat' })
 export class ChatGateway
@@ -29,7 +31,9 @@ export class ChatGateway
   }
 
   @SubscribeMessage('chatToServer')
-  handleMessage(client: Socket, message: { sender: string; message: string }) {
-    this.wss.emit('chatToClient', message);
+  handleMessage(client: Socket, message: ChatToServerMessageDto) {
+    const toClientMessage: ChatToClientMessageDto = message;
+    this.wss.emit('chatToClient', toClientMessage);
+    this.logger.log(`Chat-to-client ${client.id} message: ${toClientMessage}`);
   }
 }
