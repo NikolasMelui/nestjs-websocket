@@ -5,11 +5,20 @@
     <meta http-equiv="X-UA-Compatible" content="IE=edge" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <title>Document</title>
-    <script src="https://cdn.jsdelivr.net/npm/vue@2.6.12/dist/vue.js"></script>
+    <link rel="stylesheet" href="style.css" />
+    <link
+      href="https://unpkg.com/vue-simple-notify/dist/vue-simple-notify.min.css"
+      rel="stylesheet"
+    />
+    <script src="https://cdn.jsdelivr.net/npm/vue/dist/vue.js"></script>
+    <script src="https://unpkg.com/vue-simple-notify/dist/vue-simple-notify.min.js"></script>
     <script src="/socket.io/socket.io.js"></script>
   </head>
   <body>
     <div id="v-app">
+      <section class="alerts">
+        <alerts-component :items="alerts"></alerts-component>
+      </section>
       <h1>{{ title }}</h1>
       <form>
         <input v-model="message" type="text" />
@@ -23,6 +32,7 @@
       </ul>
     </div>
     <script>
+      Vue.component('alerts-component', VueSimpleNotify.VueSimpleNotify);
       const app = new Vue({
         el: '#v-app',
         data: {
@@ -30,7 +40,8 @@
           username: '',
           message: '',
           messages: [],
-          socket: { chat: null },
+          socket: { chat: null, alerts: null },
+          alerts: [],
         },
         methods: {
           sendChatMessage() {
@@ -43,12 +54,24 @@
           receiveChatMessage(msg) {
             this.messages.push(msg);
           },
+          receiveAlertMessage(msg) {
+            this.alerts.push(msg);
+            console.log(msg);
+            console.log(this.alerts);
+          },
         },
         created() {
           this.username = prompt('Enter your username:');
+
           this.socket.chat = io('http://localhost:3000/chat');
           this.socket.chat.on('chatToClient', (msg) => {
             this.receiveChatMessage(msg);
+          });
+
+          this.socket.alerts = io('http://localhost:3000/alert');
+          this.socket.alerts.on('alertToClient', (msg) => {
+            this.receiveAlertMessage(msg);
+            console.log('lol');
           });
         },
       });
