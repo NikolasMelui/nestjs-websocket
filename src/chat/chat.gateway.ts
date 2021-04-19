@@ -33,18 +33,22 @@ export class ChatGateway
   @SubscribeMessage('chatToServer')
   handleMessage(client: Socket, message: ChatMessageDto) {
     this.wss.to(message.room).emit('chatToClient', message);
-    this.logger.log(`Chat-to-client ${client.id} message: ${message}`);
+    this.logger.log(
+      `Client ${client.id} chat-to-client message: ${JSON.stringify(message)}`,
+    );
   }
 
   @SubscribeMessage('joinRoom')
   handleJoinRoom(client: Socket, room: ChatRoom) {
     client.join(room);
-    this.wss.emit('joinedRoom', room);
+    client.emit('joinedRoom', room);
+    this.logger.log(`Client ${client.id} joined room: ${room}`);
   }
 
   @SubscribeMessage('leaveRoom')
   handleLeaveRoom(client: Socket, room: ChatRoom) {
     client.leave(room);
-    this.wss.emit('leftRoom', room);
+    client.emit('leftRoom', room);
+    this.logger.log(`Client ${client.id} left room: ${room}`);
   }
 }
