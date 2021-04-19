@@ -32,7 +32,7 @@ export class ChatGateway
 
   @SubscribeMessage('chatToServer')
   handleMessage(client: Socket, message: ChatMessageDto) {
-    this.wss.emit('chatToClient', message);
+    this.wss.to(message.room).emit('chatToClient', message);
     this.logger.log(`Chat-to-client ${client.id} message: ${message}`);
   }
 
