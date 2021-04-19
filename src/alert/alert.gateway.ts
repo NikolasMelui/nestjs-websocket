@@ -1,7 +1,7 @@
 import { Logger } from '@nestjs/common';
 import { WebSocketGateway, WebSocketServer } from '@nestjs/websockets';
 import { Server } from 'socket.io';
-import { AlertToClientDto } from './alert-to-client.dto';
+import { AlertToClientDto } from './alert-to-client.type';
 
 @WebSocketGateway({ namespace: '/alert' })
 export class AlertGateway {

@@ -1,4 +1,4 @@
-export class AlertToClientDto {
+export type AlertToClientDto = {
   type: 'Alert';
   message: string;
-}
+};
