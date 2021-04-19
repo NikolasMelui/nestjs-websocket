@@ -8,7 +8,8 @@ import {
   WebSocketServer,
 } from '@nestjs/websockets';
 import { Server, Socket } from 'socket.io';
-import { ChatToServerMessageDto } from './chat-to-server-message.dto';
+import { ChatMessageDto } from './chat-message.dto';
+import { ChatRoom } from './chat-room.enum';
 
 @WebSocketGateway({ namespace: '/chat' })
 export class ChatGateway
@@ -30,8 +31,20 @@ export class ChatGateway
   }
 
   @SubscribeMessage('chatToServer')
-  handleMessage(client: Socket, message: ChatToServerMessageDto) {
+  handleMessage(client: Socket, message: ChatMessageDto) {
     this.wss.emit('chatToClient', message);
     this.logger.log(`Chat-to-client ${client.id} message: ${message}`);
+  }
+
+  @SubscribeMessage('joinRoom')
+  handleJoinRoom(client: Socket, room: ChatRoom) {
+    client.join(room);
+    this.wss.emit('joinedRoom', room);
+  }
+
+  @SubscribeMessage('leaveRoom')
+  handleLeaveRoom(client: Socket, room: ChatRoom) {
+    client.leave(room);
+    this.wss.emit('leftRoom', room);
   }
 }
